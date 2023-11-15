@@ -1,0 +1,75 @@
+{
+  "name": "nombre-del-proyecto",
+  "version": "1.0.0",
+  "description": "Descripción de proyecto",
+  "scripts": {
+    "start": "node ProductManager.js"
+  },
+  "dependencies": {
+    "paquete-dep-1": "^1.0.0",
+    "paquete-dep-2": "^2.0.0"
+  },
+  "products": [
+    {
+      "title": "Camiseta de Fútbol",
+      "description": "Camiseta de fútbol de alta calidad.",
+      "price": 29.99,
+      "code": "FTB001",
+      "id": 1,
+      "size": "M",
+      "color": "Rojo",
+      "brand": "Nike"
+    },
+      {
+        "title": "Pantalones Deportivos",
+        "description": "Pantalones deportivos cómodos para entrenar.",
+        "price": 39.99,
+        "code": "PNT002",
+        "id": 2,
+        "size": "L",
+        "color": "Negro",
+        "brand": "Adidas"
+      },
+      {
+        "title": "Camiseta Deportiva",
+        "description": "Camiseta deportiva de secado rápido.",
+        "price": 19.99,
+        "code": "CDP003",
+        "id": 3,
+        "size": "S",
+        "color": "Azul",
+        "brand": "Puma"
+    },
+    {
+        "title": "Chaqueta Impermeable",
+        "description": "Chaqueta impermeable para actividades al aire libre.",
+        "price": 49.99,
+        "code": "CHQ004",
+        "id": 4,
+        "size": "XL",
+        "color": "Verde",
+        "brand": "Columbia"
+    },
+    {
+        "title": "Calcetines Deportivos",
+        "description": "Calcetines deportivos de alto rendimiento.",
+        "price": 9.99,
+        "code": "CLT005",
+        "id": 5,
+        "size": "Unisex",
+        "color": "Blanco",
+        "brand": "Under Armour"
+    },
+    {
+        "title": "Gorra de Béisbol",
+        "description": "Gorra de béisbol ajustable para el sol.",
+        "price": 14.99,
+        "code": "GBB006",
+        "id": 6,
+        "size": "Unisex",
+        "color": "Negro",
+        "brand": "New Era"
+    }
+    ]
+  }
+  
