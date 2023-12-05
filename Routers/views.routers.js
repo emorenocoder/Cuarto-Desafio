@@ -2,16 +2,16 @@ import { Router } from 'express';
 
 const router = Router();
 
-router.get('/', (_req, res) => {
-  res.render('home.hbs');
+router.get('/', (req, res) => {
+  res.render('home'); 
 });
 
-router.get('/realtimeproducts', (_req, res) => {
-  res.render('realTimeProducts.hbs');
+router.get('/realtimeproducts', (req, res) => {
+  res.render('realTimeProducts'); 
 });
 
-router.get('/productmanager', (_req, res) => {
-  res.render('ProductManager.hbs');
+router.get('/productmanager', (req, res) => {
+  res.render('posts');
 });
 
 export default router;

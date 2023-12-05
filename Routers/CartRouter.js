@@ -22,9 +22,14 @@ router.get('/:cid', (req, res) => {
   }
 });
 
-router.post('/', (_req, res) => {
-  const newCart = cartManager.addCart();
-  res.json(newCart);
+router.post('/', (req, res) => {
+  try {
+    const newCart = cartManager.addCart();
+    res.json(newCart);
+  } catch (error) {
+    console.error('Error en la ruta POST /:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
 });
 
 router.post('/:cid/product/:pid', (req, res) => {

@@ -17,14 +17,14 @@ export default class CartManager {
   async loadCartsFromFile() {
     try {
       const data = await fs.readFile(this.path, 'utf8');
-      
+
       if (!data.trim()) {
         console.warn("El archivo de carritos está vacío.");
         return;
       }
 
       const cartsArray = JSON.parse(data);
-      
+
       if (!Array.isArray(cartsArray)) {
         throw new Error("El contenido del archivo no es un array JSON válido.");
       }
@@ -47,13 +47,31 @@ export default class CartManager {
   }
 
   getCartById(cartId) {
-    return this.carts.get(cartId.toString());
+    return this.carts.get(cartId);
   }
 
   addCart() {
-    const newCart = { id: `c${this.carts.size + 1}`, products: [] };
-    this.carts.set(newCart.id, newCart);
+    const newCartId = `c${this.carts.size + 1}`;
+    const newCart = { id: newCartId, products: [] };
+    this.carts.set(newCartId, newCart);
     return newCart;
   }
 
+  addProductToCart(cartId, productId) {
+    const cart = this.carts.get(cartId);
+    if (!cart) {
+      throw new Error("Carrito no encontrado");
+    }
+
+    const existingProduct = cart.products.find(p => p.product === productId);
+
+    if (existingProduct) {
+      existingProduct.quantity++;
+    } else {
+      cart.products.push({ product: productId, quantity: 1 });
+    }
+
+    this.saveCartsToFile();
+    return cart;
+  }
 }

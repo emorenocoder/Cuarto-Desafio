@@ -1,8 +1,10 @@
 import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
-import exphbs from 'express-handlebars';
-import ProductRouter from '../Routers/ProductRouter';
+import { engine } from 'express-handlebars';
+import ProductRouter from '../Routers/ProductRouter.js';
+import viewRouter from '../Routers/views.routers.js';
+import { __dirname } from '../utils/utils.js';
 
 const app = express();
 const server = http.createServer(app);
@@ -14,11 +16,15 @@ try {
   console.error('Error al cargar las rutas de productos:', error);
 }
 
-app.engine('handlebars', exphbs());
-app.set('view engine', 'handlebars');
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.engine('handlebars', engine());
+app.set('views', __dirname + '/view');
+app.set('view engine', 'handlebars');
+
+app.use('/', viewRouter);
+
 
 ProductRouter.setIo(io);
 

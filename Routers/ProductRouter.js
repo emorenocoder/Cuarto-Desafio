@@ -38,36 +38,36 @@ router.post(
     body('price').isFloat({ min: 0 }).withMessage('El precio debe ser un número positivo'),
   ],
   (req, res) => {
-    const errors = validationResult(req);
+    try {
+      const errors = validationResult(req);
 
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const { action, productId } = req.body;
+
+      if (action === 'add') {
+        const newProduct = {
+          title: req.body.title,
+          description: req.body.description,
+          price: parseFloat(req.body.price),
+        };
+
+        productManager.addProduct(newProduct);
+        io.emit('newProduct', newProduct);
+      } else if (action === 'delete') {
+        productManager.deleteProduct(productId);
+        io.emit('deleteProduct', productId);
+      }
+
+      res.redirect('/realtimeproducts');
+    } catch (error) {
+      console.error('Error en la ruta POST /realtimeproducts:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
     }
-
-    const { action, productId } = req.body;
-
-    if (action === 'add') {
-      const newProduct = {
-        title: req.body.title,
-        description: req.body.description,
-        price: parseFloat(req.body.price),
-      };
-
-      productManager.addProduct(newProduct);
-      io.emit('newProduct', newProduct);
-    } else if (action === 'delete') {
-      productManager.deleteProduct(productId);
-      io.emit('deleteProduct', productId);
-    }
-
-    res.redirect('/realtimeproducts');
   }
 );
-
-router.get('/products', (_req, res) => {
-  const products = productManager.getProducts();
-  res.render('ProductManager', { products });
-});
 
 router.post('/carts', (_req, res) => {
   try {
