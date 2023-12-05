@@ -1,8 +1,17 @@
 import express from 'express';
 import ProductManager from '../Manager/ProductManager.js';
+import CartManager from '../Manager/CartManager.js';
+import { body, validationResult } from 'express-validator';
 
 const router = express.Router();
 const productManager = new ProductManager('productos.json');
+const cartManager = new CartManager('Cart.json');
+
+let io;
+
+router.setIo = (socketIo) => {
+  io = socketIo;
+};
 
 router.get('/', (req, res) => {
   const { limit } = req.query;
@@ -16,42 +25,57 @@ router.get('/', (req, res) => {
   }
 });
 
-router.get('/:pid', (req, res) => {
-  const { pid } = req.params;
+router.get('/realtimeproducts', (_req, res) => {
+  const products = productManager.getAllProducts();
+  res.render('realTimeProducts', { products });
+});
 
-  try {
-    const product = productManager.getProductById(pid);
-    res.json(product);
-  } catch (error) {
-    res.status(404).json({ error: 'Producto no encontrado' });
+router.post(
+  '/realtimeproducts',
+  [
+    body('title').notEmpty().withMessage('El título es obligatorio'),
+    body('description').notEmpty().withMessage('La descripción es obligatoria'),
+    body('price').isFloat({ min: 0 }).withMessage('El precio debe ser un número positivo'),
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { action, productId } = req.body;
+
+    if (action === 'add') {
+      const newProduct = {
+        title: req.body.title,
+        description: req.body.description,
+        price: parseFloat(req.body.price),
+      };
+
+      productManager.addProduct(newProduct);
+      io.emit('newProduct', newProduct);
+    } else if (action === 'delete') {
+      productManager.deleteProduct(productId);
+      io.emit('deleteProduct', productId);
+    }
+
+    res.redirect('/realtimeproducts');
   }
+);
+
+router.get('/products', (_req, res) => {
+  const products = productManager.getProducts();
+  res.render('ProductManager', { products });
 });
 
-router.post('/', (req, res) => {
-  const newProduct = req.body;
-  res.json(productManager.addProduct(newProduct));
-});
-
-router.put('/:pid', (req, res) => {
-  const { pid } = req.params;
-  const updatedProduct = req.body;
-
+router.post('/carts', (_req, res) => {
   try {
-    const result = productManager.updateProduct(Number(pid), updatedProduct);
-    res.json(result);
+    const newCart = cartManager.addCart();
+    res.json(newCart);
   } catch (error) {
-    res.status(404).json({ error: 'Producto no encontrado' });
-  }
-});
-
-router.delete('/:pid', (req, res) => {
-  const { pid } = req.params;
-
-  try {
-    const result = productManager.deleteProduct(Number(pid));
-    res.json(result);
-  } catch (error) {
-    res.status(404).json({ error: 'Producto no encontrado' });
+    console.error('Error en la ruta POST /carts:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
 
