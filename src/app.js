@@ -10,6 +10,17 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+io.on("connection", async (socket) => {
+  console.log("Cliente conectado");
+  socket.emit("products", await nuevoProductManager.getProducts());
+
+  socket.on("product_send", async (data) => {
+    nuevoProductManager.addProduct(data);
+
+    socket.emit("productosActualizados", await nuevoProductManager.getProducts());
+  });
+});
+
 try {
   app.use('/api/products', ProductRouter);
 } catch (error) {
@@ -19,19 +30,17 @@ try {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(express.static(__dirname + "/public"));
+
 app.engine('handlebars', engine());
 app.set('views', __dirname + '/view');
 app.set('view engine', 'handlebars');
 
 app.use('/', viewRouter);
 
-
 ProductRouter.setIo(io);
 
 const PORT = 3000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
-
-app.use('/api/products', ProductRouter);
-
