@@ -1,6 +1,7 @@
 import express from 'express';
 import ProductManager from '../Manager/ProductManager.js';
 import CartManager from '../Manager/CartManager.js';
+import * as productController from  '../controller/ProductController.js';
 import { body, validationResult } from 'express-validator';
 
 const router = express.Router();
@@ -78,5 +79,7 @@ router.post('/carts', (_req, res) => {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
+
+router.get("/product", productController.getProducts);
 
 export default router;

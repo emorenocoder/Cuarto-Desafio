@@ -2,9 +2,9 @@ import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 import { engine } from 'express-handlebars';
-import ProductRouter from '../Routers/ProductRouter.js';
-import viewRouter from '../Routers/views.routers.js';
-import { __dirname } from '../utils/utils.js';
+import ProductRouter from '../src/Routers/ProductRouter.js';
+import viewRouter from '../src/Routers/views.routers.js';
+import { __dirname } from './utils/utils.js';
 
 const app = express();
 const server = http.createServer(app);
