@@ -25,6 +25,19 @@ router.get("/", async (req, res, next) => {
         sort, 
         currentQuery: query
     });
+    
+    if(req.session.user){
+        res.render('home', { 
+            productList: productList.docs.map(doc => doc.toObject()), 
+            ...pagination, 
+            sort, 
+            currentQuery: query,
+            categories,
+            user: req.session.user
+        });
+    } else {
+        res.redirect("/login");
+    }
 
 });
 
@@ -58,6 +71,18 @@ router.get("/realtimeproducts", async (req, res, next) => {
 
 router.get("/chat", async (req, res, next) => {
     res.render("chat");
+});
+
+router.get("/login", async (req, res) => {
+    res.render("login");
+})
+
+router.get("/register", async (req, res) => {
+    res.render("register");
+});
+
+router.get("/noAuthorized", async (req, res) => {
+    res.render("noAuthorized");
 });
 
 export default router;

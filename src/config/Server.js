@@ -6,6 +6,9 @@ import { __dirname } from '../utils/utils.js';
 import connectDB from './Database.js';
 import rootRoutes from '../Routers/index.js';
 import SocketManager from '../socket/SocketManager.js';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
 
 config();
 
@@ -20,6 +23,19 @@ class Server {
         this.middlewares();
         this.handlebars();
         this.routes();
+        this.app.use(cookieParser(process.env.COOKIE_SECRET));
+        const mongoStore = MongoStore.create({
+            mongoUrl: process.env.MONGODB_ATLAS,
+            ttl: 120000, // tiempo de vida de la sesión en milisegundos (opcional)
+        });
+
+        this.app.use(session({
+            store: mongoStore,
+            secret: process.env.SESSION_SECRET,
+            cookie: { maxAge: 120000 },
+            resave: false,
+            saveUninitialized: false,
+        }));
     }
 
     configPort(){
