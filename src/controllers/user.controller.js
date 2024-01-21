@@ -1,5 +1,5 @@
-import { userService } from '#services/index.js';
-import { successResponse } from '#utils/utils.js';
+import { userService } from '../services/index.js';
+import { successResponse } from '../utils/utils.js';
 
 const addUser = async (req, res, next) => {
 

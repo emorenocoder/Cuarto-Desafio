@@ -1,6 +1,10 @@
+import ProductService from "./ProductService.js";
+import CartServices from "./CartServices.js"
+import UserService from "./UserService.js";
 
-import UserService from "../services/UserService.js";
 
+const productService = new ProductService();
+const cartService = new CartServices(productService);
 const userService = new UserService();
 
-export {  userService };
+export { productService, cartService, userService };

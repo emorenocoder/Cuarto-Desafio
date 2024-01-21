@@ -1,6 +1,6 @@
-import { User } from '#models/User.js'
-import { NotAvailableError, NotFoundError } from '#errors/customErrors.js';
-import { validateUser } from '#validators/userValidator.js';
+import { UserModel } from '../db/model/UserModel.js'
+import { NotAvailableError, NotFoundError } from '../../errors/customErrors.js';
+import { validateUser } from '../validators/userValidator.js';
 
 export default class UserService {
 
@@ -15,7 +15,7 @@ export default class UserService {
 
     async getUsers() {
     
-        const users = await User.find();
+        const users = await UserModel.find();
 
         if (users.length === 0) throw new NotAvailableError('No users available.');
 
@@ -23,13 +23,13 @@ export default class UserService {
     }
 
     async getUserById(id) {
-        const user = User.findById(id);
+        const user = UserModel.findById(id);
         if (!user) throw new NotFoundError(`User with ID ${id} not found!`);
         return user;
     }
 
     async getUserbyEmail(email) {
-        const user = User.findOne( { email} );
+        const user = UserModel.findOne( { email} );
         if (!user) throw new NotFoundError(`User with email ${email} not found!`);
 
         return user;

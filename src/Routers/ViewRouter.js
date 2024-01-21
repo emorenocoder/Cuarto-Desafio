@@ -25,19 +25,15 @@ router.get("/", async (req, res, next) => {
         sort, 
         currentQuery: query
     });
+
+    console.log(req.session)
     
-    if(req.session.user){
         res.render('home', { 
             productList: productList.docs.map(doc => doc.toObject()), 
             ...pagination, 
             sort, 
             currentQuery: query,
-            categories,
-            user: req.session.user
         });
-    } else {
-        res.redirect("/login");
-    }
 
 });
 
