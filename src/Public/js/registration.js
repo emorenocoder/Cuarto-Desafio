@@ -19,6 +19,7 @@ document.getElementById('registrationForm').addEventListener('submit', function(
         return response.json();
     })
     .then(data => {
+        console.log(data);
         // Cambia 'data.success' por 'data.status === "success"'
         if (data.status === "success") {
             Swal.fire({

@@ -3,13 +3,13 @@ import { config } from 'dotenv';
 import { Server as SocketIOServer } from 'socket.io';
 import { engine } from 'express-handlebars';
 import { __dirname } from '../utils/utils.js';
+import passport from './Passport.js';
 import connectDB from './Database.js';
 import rootRoutes from '../Routers/index.js';
 import SocketManager from '../socket/SocketManager.js';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
-
 
 config();
 
@@ -24,19 +24,6 @@ class Server {
         this.middlewares();
         this.handlebars();
         this.routes();
-        this.app.use(cookieParser(process.env.COOKIE_SECRET));
-        const mongoStore = MongoStore.create({
-            mongoUrl: process.env.MONGODB_ATLAS,
-            ttl: 120000, // tiempo de vida de la sesión en milisegundos (opcional)
-        });
-
-        this.app.use(session({
-            store: mongoStore,
-            secret: process.env.SESSION_SECRET,
-            cookie: { maxAge: 120000 },
-            resave: false,
-            saveUninitialized: false,
-        }));
     }
 
     configPort(){
@@ -51,6 +38,16 @@ class Server {
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(express.static(__dirname + "/public"));
+        this.app.use(cookieParser(process.env.COOKIE_SECRET));
+        this.app.use(session({
+            store: new MongoStore({ mongoUrl: process.env.MONGODB_ATLAS}),
+            secret: process.env.SESSION_SECRET,
+            cookie: { maxAge: 120000 },
+            resave: false,
+            saveUninitialized: false,
+        }));
+        this.app.use(passport.initialize());
+        this.app.use(passport.session());
     }
 
     handlebars(){

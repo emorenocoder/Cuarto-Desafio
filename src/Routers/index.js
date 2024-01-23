@@ -9,6 +9,6 @@ const router = Router();
 router.use('/', productRoutes);
 router.use('/', cartRoutes);
 router.use('/', viewRoutes);
-router.use('/', sessionRoutes)
+router.use('/api/', sessionRoutes)
 
 export default router;

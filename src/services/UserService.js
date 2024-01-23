@@ -8,7 +8,7 @@ export default class UserService {
         const {firstName, lastName, email, password } = userData;
         validateUser(firstName, lastName, email, password);
 
-        const newUser = new User(userData);
+        const newUser = new UserModel(userData);
         await newUser.save();
         return newUser;
     }

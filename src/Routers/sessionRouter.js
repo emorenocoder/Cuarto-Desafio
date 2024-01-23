@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import * as userController from '../controllers/user.controller.js';
 import { findByEmail } from '../controllers/session.controller.js';
+import passport from 'passport';
 
 const router = Router();
 
@@ -15,7 +16,7 @@ router.post('/login', async (req, res, next) => {
     }
 });
 
-router.post("/register", userController.addUser);
+router.post("/api/register", userController.addUser);
 
 router.get("/logout", (req, res) => {
     req.session.destroy((err) => {
@@ -28,5 +29,12 @@ router.get("/logout", (req, res) => {
         }
     });
 });
+
+router.get("/auth/github", passport.authenticate("github", { scope: ["user:email"] }));
+
+router.get("/auth/github/callback", passport.authenticate("github", {
+    successRedirect: "/",
+    failureRedirect: "/login"
+}));
 
 export default router;

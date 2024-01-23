@@ -26,7 +26,7 @@ router.get("/", async (req, res, next) => {
         currentQuery: query
     });
 
-    console.log(req.session)
+    console.log(req.isAuthenticated)
     
         res.render('home', { 
             productList: productList.docs.map(doc => doc.toObject()), 
