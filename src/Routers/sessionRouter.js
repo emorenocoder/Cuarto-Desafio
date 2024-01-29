@@ -5,16 +5,10 @@ import passport from 'passport';
 
 const router = Router();
 
-router.post('/login', async (req, res, next) => {
-    try {
-
-        await findByEmail(req, res, next);
-
-    } catch (error) {
-        // Si ocurre un error, redirige al usuario a la página de registro
-        res.redirect('/register');
-    }
-});
+router.post('/login', passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/login'
+}));
 
 router.post("/register", userController.addUser);
 

@@ -3,7 +3,7 @@ import { productManager, cartManager } from "../Manager/index.js";
 
 const router = Router();
 
-router.get("/home", async (req, res, next) => {
+router.get("/", async (req, res, next) => {
     
     const { page, limit, sort, ...query } = req.query;
    
@@ -26,14 +26,7 @@ router.get("/home", async (req, res, next) => {
         currentQuery: query
     });
 
-    console.log(req.isAuthenticated)
-    
-        res.render('home', { 
-            productList: productList.docs.map(doc => doc.toObject()), 
-            ...pagination, 
-            sort, 
-            currentQuery: query,
-        });
+   
 
 });
 

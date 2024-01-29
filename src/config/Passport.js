@@ -14,6 +14,8 @@ passport.use(new LocalStrategy({
   try {
     const user = await userService.getUserbyEmail(email);
 
+    console.log(email, password);
+
     if (!user) {
       return done(null, false, { message: 'Incorrect email.' });
     }

@@ -1,4 +1,4 @@
-import { errorResponse } from "#utils/utils.js";
+import { errorResponse } from "../utils/utils.js";
 const errorHandler = (err, req, res, next) => {
 
     err = err || {};
