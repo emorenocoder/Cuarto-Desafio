@@ -16,7 +16,7 @@ router.post('/login', async (req, res, next) => {
     }
 });
 
-router.post("/api/register", userController.addUser);
+router.post("/register", userController.addUser);
 
 router.get("/logout", (req, res) => {
     req.session.destroy((err) => {

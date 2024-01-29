@@ -3,7 +3,7 @@ import { productManager, cartManager } from "../Manager/index.js";
 
 const router = Router();
 
-router.get("/", async (req, res, next) => {
+router.get("/home", async (req, res, next) => {
     
     const { page, limit, sort, ...query } = req.query;
    
