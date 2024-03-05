@@ -3,7 +3,7 @@ import { config } from 'dotenv';
 import { Server as SocketIOServer } from 'socket.io';
 import { engine } from 'express-handlebars';
 import { __dirname } from '../utils/utils.js';
-import passport from './Passport.js';
+import passport from '../middleware/Passport.js';
 import connectDB from './Database.js';
 import rootRoutes from '../Routers/index.js';
 import SocketManager from '../socket/SocketManager.js';

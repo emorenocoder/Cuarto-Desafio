@@ -6,6 +6,12 @@ class BaseError extends Error {
     }
 }
 
+class NotAuthorizedError extends BaseError {
+    constructor(message = 'Not authorized') {
+        super('NotAuthorizedError', 401, message);
+    }
+}
+
 class NotFoundError extends BaseError {
     constructor(message = 'Resource not found') {
         super('NotFoundError', 404, message);
@@ -42,4 +48,26 @@ class ConflictError extends BaseError {
     }
 }
 
-export { NotFoundError, NotAvailableError, ValidationError, ConflictError, OutOfStockError, BadRequestError };
+class ForbidenError extends BaseError {
+    constructor(message = 'Forbiden') {
+        super('ForbidenError', 403, message);
+    }
+}
+
+class InternalServerError extends BaseError {
+    constructor(message = 'Internal server error') {
+        super('InternalServerError', 500, message);
+    }
+}
+
+export {
+    NotFoundError,
+    NotAvailableError,
+    ValidationError,
+    ConflictError,
+    OutOfStockError,
+    BadRequestError,
+    NotAuthorizedError,
+    ForbidenError,
+    InternalServerError
+};
