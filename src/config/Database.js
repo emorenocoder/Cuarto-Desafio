@@ -1,20 +1,18 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
+import { buildLogger } from "../helpers/logger.js";
 
-const connectDB = async () => {
-    const mongoURL = process.env.MONGODB_ATLAS;
-    if (!mongoURL) {
-        throw new Error('MONGODB_ATLAS connection URL is not defined in environment variables.');
-    }
+const logger = buildLogger("Database");
+
+const dbConnection = async () => {
    
-    try {
-        await mongoose.connect(mongoURL)
-            .then(() => console.log('DB Connected'))
-            .catch(err => console.log(err));
+    const mongoURL = process.env.MONGODB_ATLAS;
     
-    } catch(err) {
-        console.log('Error connecting to MongoDB:', err.message);
-        throw new Error('Error initializing database connection.');
-    }
-}
+    if (!mongoURL) throw new Error('MongoDB connection URL is not defined in environment variables.');
+    
+    mongoose.connect(mongoURL)
+    .then(() => logger.debug('Database online.'))
+    .catch((error) => logger.error('Error connecting to MongoDB:', error.message));
+    
+};
 
-export default connectDB;
+export default dbConnection;

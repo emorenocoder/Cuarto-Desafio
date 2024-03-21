@@ -10,7 +10,11 @@ import SocketManager from '../socket/SocketManager.js';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
+import errorHandler from "../middleware/error/errorHandler.middleware.js";
+import { buildLogger } from "../helpers/logger.js";
+import loggerMiddleware from "../middleware/loggerMiddleware.js";
 
+const logger = buildLogger("Server");
 config();
 
 class Server {
@@ -24,6 +28,7 @@ class Server {
         this.middlewares();
         this.handlebars();
         this.routes();
+        this.errorHandler();
     }
 
     configPort(){
@@ -47,6 +52,7 @@ class Server {
             saveUninitialized: false,
         }));
         this.app.use(passport.initialize());
+        this.app.use(loggerMiddleware);
         this.app.use(passport.session());
     }
 
@@ -66,6 +72,9 @@ class Server {
         this.app.use('/', rootRoutes);
     }
 
+    errorHandler(){
+        this.app.use(errorHandler);
+    }
 
     start(){
         this.httpServer = this.app.listen(this.port, () => {
