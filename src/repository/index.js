@@ -1,8 +1,8 @@
-import { UserModel } from "../db/model/UserModel.js";
-import { CartModel } from "../db/model/CartModel.js";
-import { ProductModel } from "../db/model/ProductModel.js";
-import { MessageModel } from "../db/model/MessageModel.js";
-import { TicketModel } from "../db/model/TicketModel.js";
+import { UserModel } from "../models/UserModel.js";
+import { CartModel } from "../models/CartModel.js";
+import { ProductModel } from "../models/ProductModel.js";
+import { MessageModel } from "../models/MessageModel.js";
+import { TicketModel } from "../models/TicketModel.js";
 import UserRepository from "./UserRepository.js";
 import CartRepository from "./CartRepository.js";
 import ProductRepository from "./ProductRepository.js";

@@ -14,13 +14,11 @@ document.getElementById('registrationForm').addEventListener('submit', function(
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error('Ocurrio un error intentelo mas tarde.');
         }
         return response.json();
     })
     .then(data => {
-        console.log(data);
-        // Cambia 'data.success' por 'data.status === "success"'
         if (data.status === "success") {
             Swal.fire({
                 title: 'Registered!',
@@ -33,7 +31,6 @@ document.getElementById('registrationForm').addEventListener('submit', function(
                 }
             });
         } else {
-            // Aquí también puedes usar 'data.message' para mostrar el mensaje del servidor
             Swal.fire({
                 title: 'Error!',
                 text: data.message || 'An unknown error occurred',

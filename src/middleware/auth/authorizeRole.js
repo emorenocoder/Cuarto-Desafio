@@ -1,4 +1,4 @@
-import { ForbidenError, NotAuthorizedError } from "../../../errors/customErrors";
+import { ForbidenError, NotAuthorizedError } from "../../errors/customErrors.js";
 
 const autorizeRole = (...alowedRoles) => {
     return (req, res, next) => {

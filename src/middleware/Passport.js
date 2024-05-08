@@ -45,7 +45,7 @@ const optionLocal = {
 passport.use('local', new LocalStrategy(optionLocal, async (req, email, password, done) => {
     try {
 
-        const user = await userService.getUserbyEmail(email);
+        const user = await userService.findByEmail(email);
 
         if (!user) {
             return done(null, false, { message: 'Incorrect password or email.' });
@@ -57,7 +57,7 @@ passport.use('local', new LocalStrategy(optionLocal, async (req, email, password
             return done(null, false, { message: 'Incorrect password or email.' });
         }
 
-        
+        userService.updateLastConnection(user._id);
 
         return done(null, user);
     } catch (error) {
@@ -72,7 +72,7 @@ passport.use('local', new LocalStrategy(optionLocal, async (req, email, password
 passport.use(new GithubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: "http://localhost:3000/api/auth/github/callback",
+    callbackURL: "http://localhost:8080/api/auth/github/callback",
     scope: ["user:email"]
   }, async (accessToken, refreshToken, profile, done) => {
     try {

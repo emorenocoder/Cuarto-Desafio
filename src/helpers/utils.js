@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { BadRequestError } from '../../errors/customErrors.js';
+import { BadRequestError } from '../errors/customErrors.js';
 const currentDir = dirname(fileURLToPath(import.meta.url))
 const __dirname = dirname(currentDir);
 

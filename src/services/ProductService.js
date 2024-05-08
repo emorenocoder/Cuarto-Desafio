@@ -1,63 +1,31 @@
-import mongoose from 'mongoose';
-import { validateProduct } from '../validators/productValidator.js';
-import { NotFoundError, NotAvailableError, ConflictError, BadRequestError } from '../../errors/customErrors.js';
-import { ProductModel } from '../db/model/ProductModel.js';
-
-
-
-
+import mongoose from "mongoose";
+import { ConflictError, InternalServerError, NotFoundError, NotAuthorizedError, BadRequestError } from "../errors/customErrors.js";
+import sendEmail from "./MailerService.js"
 export default class ProductService {
 
-    /**
-     * ? should we use this auxiliar function out of the class?
-    */
-
-    validateObjetId(id) {
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            throw new BadRequestError("Product ID is not valid.");
-        }
+    constructor(productRepository) {
+        this.productRepository = productRepository;
     }
 
+    async validateObjectId(id) {
+        if (!mongoose.Types.ObjectId.isValid(id)) throw new BadRequestError('Invalid id');
+    }
 
     async productExists(code) {
-        return await ProductModel.findOne({ code: code })
+        return await this.productRepository.productExist(code);
     }
 
-    async addProduct(title, status, category, description, price, thumbnail, code, stock) {
+    async createProduct(product, user) {
 
-        if (await this.productExists(code)) throw new ConflictError(`Product with the code ${code} already exists!`);
+        const { code, owner } = product;
 
-        validateProduct(title, category, description, price, thumbnail, code, stock);
-
-        const newProduct = new Product({ title, status, category, description, price, thumbnail, code, stock });
-
-        await newProduct.save();
-
-        return newProduct;
-    }
-
-    async deleteProductById(id) {
-
-        this.validateObjetId(id);
-        const result = await ProductModel.deleteOne({ _id: id });
-
-        if (result.deletedCount === 0) {
-            throw new NotFoundError(`Product with ID ${id} not found.`);
+        if (await this.productExists(code)) {
+            throw new ConflictError(`Product with the code ${code} already exists!`);
         }
-    }
 
-    /**
-     * ? should validate the update before updating?
-     */
-    async updateProductById(id, updates) {
+        product.owner = (!owner && user.role !== 'PREMIUM') ? 'admin' : user.email;
 
-        this.validateObjetId(id);
-
-        const updatedProduct = await ProductModel.findByIdAndUpdate(id, updates, { new: true });
-        if (!updatedProduct) throw new NotFoundError(`Product with ID ${id} not found for update.`);
-
-        return updatedProduct;
-
+        return await this.productRepository.create(product);
     }
 
     async getProducts({ limit = 12, page = 1, sort = {}, query = {} } = {}) {
@@ -76,46 +44,76 @@ export default class ProductService {
             sort: sortOrder
         }
 
-        const products = await ProductModel.paginate(query, options);
+        const products = await this.productRepository.getProducts(query, options);
 
-        if (!products.docs.length) throw new NotAvailableError('No products available.');
+        if (!products.docs.length) {
+            throw new NotAvailableError('No products available.');
+        }
 
         return products;
     }
 
-
     async getUniqueCategories() {
-        const categories = await ProductModel.distinct('category');
-        return categories;
+        return await this.productRepository.getCategories();
     }
-
 
     async getProductById(id) {
 
-        this.validateObjetId(id);
-
-        const product = await ProductModel.findById(id);
-        if (!product) throw new NotFoundError(`Product with ID ${id} not found!`);
-
+        await this.validateObjectId(id);
+        const product = await this.productRepository.findById(id);
+        if (!product) {
+            throw new NotFoundError("Product not found.");
+        }
         return product;
     }
 
+    async updateProduct(id, product) {
+        await this.validateObjectId(id);
+        const productUpdate = await this.productRepository.update(id, product);
+        if (!productUpdate) {
+            throw new NotFoundError("Product not found.");
+        }
+        return productUpdate;
+    }
 
+    async deleteProduct(id, user) {
 
-    async updateProductStock(id, quantity) {
-
-        this.validateObjetId(id);
+        await this.validateObjectId(id);
         const product = await this.getProductById(id);
 
-        const updateResult = await ProductModel.updateOne(
-            { _id: id, stock: { $gte: -quantity } },
-            { $inc: { stock: quantity } }
-        );
+        if (user.role !== 'ADMIN' && product.owner !== user.email) {
+            throw new NotAuthorizedError("You do not have permission to delete this product.");
+        }
 
-        if (updateResult.nModified === 0) {
-            throw new BadRequestError(`Cannot reduce stock by ${Math.abs(quantity)} as there are only ${product.stock} items in stock.`);
+        const productDelete = await this.productRepository.delete(id);
+
+        if(product.owner !== 'admin'){
+            sendEmail(
+                product.owner,
+                'DeleteProduct',
+                'eliminacionProducto',
+                {
+                    idProduct:product._id,
+                    email: product.owner,
+                    nombreProducto: product.title,
+                }
+
+            );
+        }
+
+        if (!productDelete) {
+            throw new NotFoundError("Product not found.");
+        }
+        return productDelete;
+    }
+
+    async updateProductStock(id, quantity) {
+        const productUpdate = await this.productRepository.updateStock(id, quantity);
+        if (productUpdate.nModified === 0) {
+            throw new ConflictError("Not enough stock.");
         }
     }
+
 
 
 }

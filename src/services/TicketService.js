@@ -1,4 +1,4 @@
-import { NotFoundError } from "../../errors/customErrors.js";
+import { NotFoundError } from "../errors/customErrors.js";
 
 export default class TicketService {
 

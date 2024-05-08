@@ -56,7 +56,6 @@ function initSocket(user) {
     socket.emit('new user', user);
 
     socket.on('new message', function(data) {
-        console.log(data);
         displayMessage(data);
     });
 

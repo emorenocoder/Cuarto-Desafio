@@ -11,7 +11,7 @@ paths:
           description: Server error
 
 
-l
+
     post:
       summary: Created a new product
       tags:
